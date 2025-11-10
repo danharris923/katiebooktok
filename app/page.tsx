@@ -37,7 +37,7 @@ export default function Home() {
           <div className="max-w-4xl mx-auto text-center space-y-6">
             {/* Clean title with gumball logo */}
             <h1
-              className="font-cursive text-6xl md:text-8xl lg:text-9xl font-bold text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+              className="font-sans text-6xl md:text-8xl lg:text-9xl font-bold text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]"
               style={{
                 textShadow: "2px 2px 4px rgba(0,0,0,0.5), 0 0 30px rgba(255,255,255,0.2)",
               }}
