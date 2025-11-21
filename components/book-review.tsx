@@ -1,11 +1,9 @@
 "use client"
 
-import { useState } from "react"
 import { Star } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
-import { ReviewModal } from "@/components/review-modal"
 
 interface BookReviewProps {
   bookId: string
@@ -34,8 +32,6 @@ export function BookReview({
   reverse = false,
   dateRead,
 }: BookReviewProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-
   // Create preview - use first sentence of plot if available, otherwise review
   const getPreviewText = () => {
     if (plot) {
@@ -102,12 +98,6 @@ export function BookReview({
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 className="glass-button flex-1 md:flex-none md:min-w-[200px] h-12 text-base rounded-xl"
-                onClick={() => setIsModalOpen(true)}
-              >
-                Read Full Review
-              </button>
-              <button
-                className="glass-button flex-1 md:flex-none md:min-w-[200px] h-12 text-base rounded-xl"
                 onClick={() => window.open(affiliateLink, "_blank")}
               >
                 Get on Amazon
@@ -116,22 +106,6 @@ export function BookReview({
           </div>
         </div>
       </CardContent>
-
-      {/* Review Modal */}
-      <ReviewModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        bookId={bookId}
-        title={title}
-        author={author}
-        rating={rating}
-        coverImage={coverImage}
-        review={review}
-        plot={plot}
-        tags={tags}
-        affiliateLink={affiliateLink}
-        dateRead={dateRead}
-      />
     </Card>
   )
 }
