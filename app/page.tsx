@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Link from "next/link" // ADDED: Import Link for navigation to individual book pages
 import { BookReview } from "@/components/book-review"
 import { TopPicks } from "@/components/top-picks"
 import { TBRSection } from "@/components/tbr-section"
@@ -96,23 +95,23 @@ export default function Home() {
               {"Latest Reviews"}
             </h2>
 
-            {/* UPDATED: Wrapped each BookReview with Link to navigate to individual book pages */}
+            {/* Book cards with "Read Full Review" button linking to individual pages */}
             {latestBooks.map((book, index) => (
-              <Link key={book.id} href={`/books/${book.slug}`} className="block">
-                <BookReview
-                  bookId={book.id}
-                  title={book.title}
-                  author={book.author}
-                  rating={Math.round(book.rating)}
-                  coverImage={book.coverImage}
-                  review={book.description}
-                  plot={book.plot}
-                  affiliateLink={book.amazonUrl}
-                  tags={[book.genre]}
-                  reverse={index % 2 !== 0}
-                  dateRead={book.dateRead}
-                />
-              </Link>
+              <BookReview
+                key={book.id}
+                bookId={book.id}
+                title={book.title}
+                author={book.author}
+                rating={Math.round(book.rating)}
+                coverImage={book.coverImage}
+                review={book.description}
+                plot={book.plot}
+                affiliateLink={book.amazonUrl}
+                tags={[book.genre]}
+                reverse={index % 2 !== 0}
+                dateRead={book.dateRead}
+                slug={book.slug}
+              />
             ))}
           </div>
         </section>

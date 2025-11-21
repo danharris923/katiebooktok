@@ -4,6 +4,7 @@ import { Star } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
+import Link from "next/link"
 
 interface BookReviewProps {
   bookId: string
@@ -17,6 +18,7 @@ interface BookReviewProps {
   tags: string[]
   reverse?: boolean
   dateRead?: string
+  slug?: string  // URL slug for linking to individual page
 }
 
 export function BookReview({
@@ -31,6 +33,7 @@ export function BookReview({
   tags,
   reverse = false,
   dateRead,
+  slug,
 }: BookReviewProps) {
   // Create preview - use first sentence of plot if available, otherwise review
   const getPreviewText = () => {
@@ -96,6 +99,13 @@ export function BookReview({
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
+              {slug && (
+                <Link href={`/books/${slug}`}>
+                  <button className="glass-button w-full md:min-w-[200px] h-12 text-base rounded-xl">
+                    Read Full Review
+                  </button>
+                </Link>
+              )}
               <button
                 className="glass-button flex-1 md:flex-none md:min-w-[200px] h-12 text-base rounded-xl"
                 onClick={() => window.open(affiliateLink, "_blank")}
