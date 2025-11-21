@@ -150,7 +150,7 @@ export default function Home() {
           <div className="space-y-3">
             <p className="text-sm">{"© 2025 Katie Booktok. All affiliate links support this blog."}</p>
             <p className="text-sm">
-              {"Looking for great deals? Check out "}
+              {"More great content: "}
               <a
                 href="https://shopcanada.cc"
                 target="_blank"
@@ -159,7 +159,15 @@ export default function Home() {
               >
                 ShopCanada.cc
               </a>
-              {" for Canadian shopping deals and discounts."}
+              {" | "}
+              <a
+                href="https://ashlyfraser.ca"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/80 hover:text-white underline transition-colors"
+              >
+                AshlyFraser.ca
+              </a>
             </p>
           </div>
         </footer>
