@@ -83,9 +83,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }): Promise<Metadata> {
-  const book = getBookBySlug(params.slug)
+  const { slug } = await params
+  const book = getBookBySlug(slug)
 
   // If book not found, return basic metadata
   if (!book) {
@@ -175,9 +176,12 @@ export async function generateMetadata({
  * The actual rendering is delegated to BookPageClient which
  * handles all the interactive UI elements.
  */
-export default function BookPage({ params }: { params: { slug: string } }) {
+export default async function BookPage({ params }: { params: Promise<{ slug: string }> }) {
+  // Await params (Next.js 16 requirement)
+  const { slug } = await params
+
   // Get book data from slug
-  const book = getBookBySlug(params.slug)
+  const book = getBookBySlug(slug)
 
   // If book not found, show Next.js 404 page
   if (!book) {
@@ -185,5 +189,5 @@ export default function BookPage({ params }: { params: { slug: string } }) {
   }
 
   // Pass book data to Client Component for rendering
-  return <BookPageClient book={book} slug={params.slug} />
+  return <BookPageClient book={book} slug={slug} />
 }
