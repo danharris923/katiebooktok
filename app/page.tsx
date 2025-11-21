@@ -10,11 +10,16 @@ import { Navbar } from "@/components/navbar"
 import { AboutModal } from "@/components/about-modal"
 import { NewsletterModal } from "@/components/newsletter-modal"
 import { Button } from "@/components/ui/button"
+import { getAllBooks, getTopRatedBooks } from "@/lib/books"
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0)
   const [isAboutOpen, setIsAboutOpen] = useState(false)
   const [isNewsletterOpen, setIsNewsletterOpen] = useState(false)
+
+  // Get Katie's real books from Goodreads scrape
+  const allBooks = getAllBooks()
+  const latestBooks = allBooks.slice(0, 10) // First 10 books (most recent)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -83,43 +88,29 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Book Reviews Section */}
+        {/* Book Reviews Section - Katie's Real Books from Goodreads */}
         <section id="reviews" className="py-16 px-4">
           <div className="max-w-6xl mx-auto space-y-12">
             <h2 className="font-sans font-bold text-4xl md:text-5xl text-center mb-12 text-balance">
               {"Latest Reviews"}
             </h2>
 
-            <BookReview
-              title="Fourth Wing"
-              author="Rebecca Yarros"
-              rating={5}
-              coverImage="/fantasy-book-cover-dragon-violet.jpg"
-              review="An absolute masterpiece! The dragon bonding system is intricate and fascinating. Violet's journey from underdog to warrior had me completely hooked. The chemistry between the characters is electric, and the plot twists left me gasping. A must-read for fantasy romance lovers!"
-              affiliateLink="#"
-              tags={["Dragons", "Enemies to Lovers", "Military Academy"]}
-            />
-
-            <BookReview
-              title="A Court of Thorns and Roses"
-              author="Sarah J. Maas"
-              rating={5}
-              coverImage="/placeholder-popew.png"
-              review="The perfect blend of Beauty and the Beast retelling with High Fae politics. Feyre's transformation is beautifully written, and the world-building is absolutely stunning. The romance builds slowly and intensely. This series changed my life and ignited my love for fantasy romance!"
-              affiliateLink="#"
-              tags={["Fae", "Retelling", "Slow Burn"]}
-              reverse
-            />
-
-            <BookReview
-              title="House of Earth and Blood"
-              author="Sarah J. Maas"
-              rating={4}
-              coverImage="/fantasy-book-cover-urban-angel-wings.jpg"
-              review="Urban fantasy at its finest! The mystery kept me guessing until the very end. Bryce is a phenomenally flawed and real protagonist. The world of Crescent City is rich with different species and political intrigue. Warning: the middle can be slow, but the payoff is absolutely worth it!"
-              affiliateLink="#"
-              tags={["Urban Fantasy", "Mystery", "Found Family"]}
-            />
+            {latestBooks.map((book, index) => (
+              <BookReview
+                key={book.id}
+                bookId={book.id}
+                title={book.title}
+                author={book.author}
+                rating={Math.round(book.rating)}
+                coverImage={book.coverImage}
+                review={book.description}
+                plot={book.plot}
+                affiliateLink={book.amazonUrl}
+                tags={[book.genre]}
+                reverse={index % 2 !== 0}
+                dateRead={book.dateRead}
+              />
+            ))}
           </div>
         </section>
 
@@ -154,7 +145,21 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="py-12 px-4 text-center text-muted-foreground">
-          <p className="text-sm">{"© 2025 Katie Booktok. All affiliate links support this blog."}</p>
+          <div className="space-y-3">
+            <p className="text-sm">{"© 2025 Katie Booktok. All affiliate links support this blog."}</p>
+            <p className="text-sm">
+              {"Looking for great deals? Check out "}
+              <a
+                href="https://shopcanada.cc"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/80 hover:text-white underline transition-colors"
+              >
+                ShopCanada.cc
+              </a>
+              {" for Canadian shopping deals and discounts."}
+            </p>
+          </div>
         </footer>
       </div>
 

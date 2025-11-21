@@ -2,51 +2,9 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
+import tbrData from "@/data/katie_tbr.json"
 
-const tbrBooks = [
-  {
-    title: "The Ashes and the Star-Cursed King",
-    author: "Carissa Broadbent",
-    coverImage: "/fantasy-book-ashes-star-cursed-king.jpg",
-    affiliateLink: "#",
-    releaseInfo: "Out Now",
-  },
-  {
-    title: "The Serpent and the Wings of Night",
-    author: "Carissa Broadbent",
-    coverImage: "/fantasy-book-serpent-wings-night.jpg",
-    affiliateLink: "#",
-    releaseInfo: "Out Now",
-  },
-  {
-    title: "Assistant to the Villain",
-    author: "Hannah Nicole Maehrer",
-    coverImage: "/fantasy-book-assistant-villain.jpg",
-    affiliateLink: "#",
-    releaseInfo: "Out Now",
-  },
-  {
-    title: "Hell Bent",
-    author: "Leigh Bardugo",
-    coverImage: "/fantasy-book-hell-bent-dark.jpg",
-    affiliateLink: "#",
-    releaseInfo: "Out Now",
-  },
-  {
-    title: "House of Flame and Shadow",
-    author: "Sarah J. Maas",
-    coverImage: "/fantasy-book-flame-shadow.jpg",
-    affiliateLink: "#",
-    releaseInfo: "Out Now",
-  },
-  {
-    title: "A Dawn of Onyx",
-    author: "Kate Golden",
-    coverImage: "/fantasy-book-dawn-onyx.jpg",
-    affiliateLink: "#",
-    releaseInfo: "Out Now",
-  },
-]
+const tbrBooks = tbrData
 
 export function TBRSection() {
   return (
@@ -62,9 +20,10 @@ export function TBRSection() {
               <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden shadow-lg">
                 <Image
                   src={book.coverImage || "/placeholder.svg"}
-                  alt={`${book.title} cover`}
+                  alt={`${book.title} by ${book.author} - Katie's TBR (To Be Read)`}
                   fill
                   className="object-cover"
+                  unoptimized
                 />
               </div>
               <div className="space-y-2">

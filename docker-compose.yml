@@ -1,0 +1,52 @@
+# ============================================
+# Docker Compose Configuration
+# Fantasy Book Review - v0 Next.js App
+# ============================================
+
+services:
+  # Next.js Application
+  web:
+    # Build from local Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Container name
+    container_name: fantasy-book-review
+
+    # Port mapping: host:container
+    # Access app at http://localhost:3000
+    ports:
+      - "3000:3000"
+
+    # Environment variables
+    environment:
+      - NODE_ENV=production
+      - HOSTNAME=0.0.0.0
+      - PORT=3000
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Health check to ensure app is running
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    # Resource limits (optional - adjust as needed)
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '1'
+    #       memory: 512M
+    #     reservations:
+    #       cpus: '0.5'
+    #       memory: 256M
+
+# Optional: Networks configuration
+# networks:
+#   default:
+#     name: fantasy-book-review-network

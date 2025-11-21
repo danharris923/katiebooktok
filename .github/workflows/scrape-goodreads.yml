@@ -1,0 +1,132 @@
+# ============================================
+# GitHub Actions Workflow
+# Weekly Goodreads Book Review Scraper
+# ============================================
+#
+# This workflow runs every Sunday at 2 AM UTC
+# Scrapes book reviews from Goodreads
+# Commits the data back to the repo
+# Triggers automatic redeployment on Vercel/Docker
+# ============================================
+
+name: Scrape Goodreads Weekly
+
+on:
+  # Schedule: Every Sunday at 2:00 AM UTC
+  schedule:
+    - cron: '0 2 * * 0'  # Min Hour Day Month DayOfWeek
+
+  # Allow manual triggering from GitHub UI
+  workflow_dispatch:
+
+  # Optional: Run on push to test
+  # push:
+  #   branches: [ main ]
+
+jobs:
+  scrape-and-commit:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # Required to commit back to repo
+
+    steps:
+      # ============================================
+      # Step 1: Checkout repository
+      # ============================================
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ============================================
+      # Step 2: Setup Node.js environment
+      # ============================================
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      # ============================================
+      # Step 3: Enable pnpm
+      # ============================================
+      - name: 📦 Enable pnpm
+        run: corepack enable
+
+      # ============================================
+      # Step 4: Install dependencies
+      # ============================================
+      - name: 📚 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # ============================================
+      # Step 5: Run scraper script
+      # ============================================
+      - name: 🕷️ Run Goodreads scraper
+        env:
+          # Katie's Goodreads credentials (stored as GitHub Secrets)
+          GOODREADS_EMAIL: ${{ secrets.GOODREADS_EMAIL }}
+          GOODREADS_PASSWORD: ${{ secrets.GOODREADS_PASSWORD }}
+          # Hardcoded values (safe to expose)
+          GOODREADS_USER_ID: "162126255"
+          AMAZON_AFFILIATE_TAG: "promopenguin-20"
+          AMAZON_REGION: "ca"
+          NODE_ENV: production
+        run: |
+          echo "🚀 Starting Goodreads scraper..."
+          echo "📚 Scraping Katie's Goodreads (User ID: 162126255)"
+          node scripts/scrape-goodreads.js
+          echo "✅ Scraping complete!"
+
+      # ============================================
+      # Step 6: Check if data changed
+      # ============================================
+      - name: 🔍 Check for data changes
+        id: git-check
+        run: |
+          git diff --exit-code data/katie_books.json || echo "changed=true" >> $GITHUB_OUTPUT
+
+      # ============================================
+      # Step 7: Commit and push changes
+      # ============================================
+      - name: 💾 Commit scraped data
+        if: steps.git-check.outputs.changed == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/katie_books.json
+          git commit -m "🤖 Auto-update: Weekly Goodreads scrape ($(date '+%Y-%m-%d'))"
+          git push
+
+      # ============================================
+      # Step 8: Trigger Vercel deployment (optional)
+      # ============================================
+      # Vercel automatically deploys on push to main
+      # Docker: You'd need to set up a webhook or
+      # use GitHub Actions to rebuild/redeploy
+
+      - name: 🚀 Deployment triggered
+        if: steps.git-check.outputs.changed == 'true'
+        run: |
+          echo "✅ Data updated and pushed to repository"
+          echo "🚀 Vercel will automatically redeploy"
+
+      # ============================================
+      # Step 9: Send notification (optional)
+      # ============================================
+      - name: 📧 Send notification
+        if: steps.git-check.outputs.changed == 'true'
+        run: |
+          echo "📊 Scraped $(jq length data/katie_books.json) books from Katie's Goodreads"
+          echo "📅 Last updated: $(date)"
+          echo "👤 User: Gumball Chronicles (162126255)"
+          # Add Discord/Slack webhook notification here if needed
+
+# ============================================
+# Manual Trigger Instructions:
+# ============================================
+# Go to: https://github.com/YOUR_USERNAME/v0-fantasy-book-review/actions
+# Click "Scrape Goodreads Weekly"
+# Click "Run workflow" button
+# ============================================
