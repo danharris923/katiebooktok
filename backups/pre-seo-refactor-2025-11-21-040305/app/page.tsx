@@ -95,7 +95,6 @@ export default function Home() {
               {"Latest Reviews"}
             </h2>
 
-            {/* Book cards with "Read Full Review" button linking to individual pages */}
             {latestBooks.map((book, index) => (
               <BookReview
                 key={book.id}
@@ -110,7 +109,6 @@ export default function Home() {
                 tags={[book.genre]}
                 reverse={index % 2 !== 0}
                 dateRead={book.dateRead}
-                slug={book.slug}
               />
             ))}
           </div>
@@ -147,7 +145,21 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="py-12 px-4 text-center text-muted-foreground">
-          <p className="text-sm">{"© 2025 Katie Booktok. All affiliate links support this blog."}</p>
+          <div className="space-y-3">
+            <p className="text-sm">{"© 2025 Katie Booktok. All affiliate links support this blog."}</p>
+            <p className="text-sm">
+              {"Looking for great deals? Check out "}
+              <a
+                href="https://shopcanada.cc"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/80 hover:text-white underline transition-colors"
+              >
+                ShopCanada.cc
+              </a>
+              {" for Canadian shopping deals and discounts."}
+            </p>
+          </div>
         </footer>
       </div>
 
