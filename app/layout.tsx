@@ -95,6 +95,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script defer src="https://analytics.promopenguin.ca/script.js" data-website-id="f86e9daa-7b18-4f24-bf25-effd861ef1fd"></script>
+      </head>
       <body className={`font-sans antialiased`}>
         {children}
         <Analytics />
