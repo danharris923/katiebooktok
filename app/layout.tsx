@@ -9,6 +9,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] })
 const _caveat = Caveat({ subsets: ["latin"], weight: ["700"] })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://katiebooktok.com'),
   title: "Katie Booktok - Fantasy Book Reviews & Romance Novel Recommendations",
   description: "Your guide to fantasy, dragons, and swoon-worthy romance. Katie's honest book reviews of the latest fantasy novels, dark romance, spicy reads, and BookTok favorites. Discover your next book obsession!",
   keywords: [

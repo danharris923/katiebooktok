@@ -54,8 +54,8 @@ export function JsonLdBookSchema({
     // Genre/category
     genre: book.genre,
 
-    // Publication year
-    datePublished: `${book.publishedYear}-01-01`,
+    // Publication year - only include if we have valid data
+    ...(book.publishedYear && { datePublished: `${book.publishedYear}-01-01` }),
 
     // Katie's aggregate rating based on her 5-star rating
     aggregateRating: {
@@ -63,7 +63,8 @@ export function JsonLdBookSchema({
       ratingValue: book.rating.toString(),
       bestRating: '5',
       worstRating: '1',
-      ratingCount: book.reviews.toString(),
+      // Use at least 1 for ratingCount to be valid schema
+      ratingCount: Math.max(1, book.reviews).toString(),
     },
 
     // Katie's review of the book
@@ -72,6 +73,7 @@ export function JsonLdBookSchema({
       author: {
         '@type': 'Person',
         name: 'Katie',
+        url: 'https://katiebooktok.com',
       },
       reviewRating: {
         '@type': 'Rating',
@@ -99,6 +101,42 @@ export function JsonLdBookSchema({
       type="application/ld+json"
       dangerouslySetInnerHTML={{
         __html: schemaJson,
+      }}
+      suppressHydrationWarning
+    />
+  );
+}
+
+/**
+ * BreadcrumbList JSON-LD Schema Component
+ * Generates structured data for breadcrumb navigation
+ */
+interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
+interface JsonLdBreadcrumbProps {
+  items: BreadcrumbItem[];
+}
+
+export function JsonLdBreadcrumb({ items }: JsonLdBreadcrumbProps) {
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(breadcrumbSchema),
       }}
       suppressHydrationWarning
     />

@@ -122,6 +122,161 @@ export function getLatestBooks(limit = 10): Book[] {
 }
 
 /**
+ * Generate URL-friendly slug from author name
+ */
+export function generateAuthorSlug(author: string): string {
+  return author
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Get all unique authors with their book counts
+ */
+export interface Author {
+  name: string;
+  slug: string;
+  bookCount: number;
+  avgRating: number;
+  books: Book[];
+}
+
+export function getAllAuthors(): Author[] {
+  const books = getAllBooks();
+  const authorMap = new Map<string, Book[]>();
+
+  // Group books by author
+  books.forEach(book => {
+    const existing = authorMap.get(book.author) || [];
+    authorMap.set(book.author, [...existing, book]);
+  });
+
+  // Convert to Author objects
+  return Array.from(authorMap.entries())
+    .map(([name, authorBooks]) => ({
+      name,
+      slug: generateAuthorSlug(name),
+      bookCount: authorBooks.length,
+      avgRating: authorBooks.reduce((sum, b) => sum + b.rating, 0) / authorBooks.length,
+      books: authorBooks.sort((a, b) => b.rating - a.rating),
+    }))
+    .sort((a, b) => b.bookCount - a.bookCount || b.avgRating - a.avgRating);
+}
+
+/**
+ * Get a single author by slug
+ */
+export function getAuthorBySlug(slug: string): Author | undefined {
+  return getAllAuthors().find(a => a.slug === slug);
+}
+
+/**
+ * Get books by author name
+ */
+export function getBooksByAuthor(authorName: string): Book[] {
+  return getAllBooks().filter(b => b.author === authorName);
+}
+
+/**
+ * Sub-genre/tag definitions with keywords to match
+ */
+export interface Tag {
+  slug: string;
+  name: string;
+  description: string;
+  keywords: string[];
+}
+
+export const TAGS: Tag[] = [
+  {
+    slug: 'dark-romance',
+    name: 'Dark Romance',
+    description: 'Intense, morally grey romances with darker themes',
+    keywords: ['dark romance', 'dark verse', 'bully romance', 'enemies to lovers', 'morally grey', 'villain'],
+  },
+  {
+    slug: 'dragons',
+    name: 'Dragon Fantasy',
+    description: 'Epic fantasy featuring dragons and dragon riders',
+    keywords: ['dragon', 'wyrm', 'dragonrider', 'fourth wing'],
+  },
+  {
+    slug: 'fae',
+    name: 'Fae & Faerie',
+    description: 'Stories featuring the fair folk and fae courts',
+    keywords: ['fae', 'faerie', 'faery', 'court of', 'folk of the air', 'sidhe'],
+  },
+  {
+    slug: 'vampires',
+    name: 'Vampires',
+    description: 'Vampire romance and dark vampire fantasy',
+    keywords: ['vampire', 'blood', 'immortal', 'fangs'],
+  },
+  {
+    slug: 'witches',
+    name: 'Witches & Magic',
+    description: 'Stories featuring witches, witchcraft, and magic users',
+    keywords: ['witch', 'witchcraft', 'coven', 'magic', 'spell'],
+  },
+  {
+    slug: 'enemies-to-lovers',
+    name: 'Enemies to Lovers',
+    description: 'Romance where characters start as rivals or enemies',
+    keywords: ['enemies to lovers', 'hate to love', 'rivals', 'forbidden'],
+  },
+  {
+    slug: 'high-fantasy',
+    name: 'High Fantasy',
+    description: 'Epic world-building with extensive fantasy settings',
+    keywords: ['kingdom', 'throne', 'empire', 'realm', 'court', 'crown', 'prince', 'princess', 'king', 'queen'],
+  },
+];
+
+/**
+ * Get tags that match a book based on title, description, and plot
+ */
+export function getBookTags(book: Book): Tag[] {
+  const searchText = `${book.title} ${book.description} ${book.plot || ''}`.toLowerCase();
+
+  return TAGS.filter(tag =>
+    tag.keywords.some(keyword => searchText.includes(keyword.toLowerCase()))
+  );
+}
+
+/**
+ * Get all books matching a specific tag
+ */
+export function getBooksByTag(tagSlug: string): Book[] {
+  const tag = TAGS.find(t => t.slug === tagSlug);
+  if (!tag) return [];
+
+  return getAllBooks().filter(book => {
+    const searchText = `${book.title} ${book.description} ${book.plot || ''}`.toLowerCase();
+    return tag.keywords.some(keyword => searchText.includes(keyword.toLowerCase()));
+  });
+}
+
+/**
+ * Get tag by slug
+ */
+export function getTagBySlug(slug: string): Tag | undefined {
+  return TAGS.find(t => t.slug === slug);
+}
+
+/**
+ * Get all tags with book counts
+ */
+export function getAllTagsWithCounts(): (Tag & { bookCount: number })[] {
+  return TAGS.map(tag => ({
+    ...tag,
+    bookCount: getBooksByTag(tag.slug).length,
+  })).filter(tag => tag.bookCount > 0).sort((a, b) => b.bookCount - a.bookCount);
+}
+
+/**
  * Get similar books based on author and rating
  * Excludes the current book
  */
