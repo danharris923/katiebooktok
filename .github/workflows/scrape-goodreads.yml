@@ -40,19 +40,19 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       # ============================================
-      # Step 2: Setup Node.js environment
+      # Step 2: Enable pnpm (MUST be before setup-node with cache)
+      # ============================================
+      - name: 📦 Enable pnpm
+        run: corepack enable pnpm
+
+      # ============================================
+      # Step 3: Setup Node.js environment
       # ============================================
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'pnpm'
-
-      # ============================================
-      # Step 3: Enable pnpm
-      # ============================================
-      - name: 📦 Enable pnpm
-        run: corepack enable
 
       # ============================================
       # Step 4: Install dependencies
