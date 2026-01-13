@@ -61,7 +61,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       # ============================================
-      # Step 5: Run scraper script
+      # Step 5: Install Chrome for Puppeteer
+      # ============================================
+      - name: 🌐 Install Chrome
+        run: npx puppeteer browsers install chrome
+
+      # ============================================
+      # Step 6: Run scraper script
       # ============================================
       - name: 🕷️ Run Goodreads scraper
         env:
